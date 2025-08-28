@@ -10,9 +10,9 @@ import { BellOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
-const HeaderBar: React.FC = () => {
+const Header: React.FC = () => {
   return (
-    <header className="bg-[#ffffff] h-16 px-6 flex items-center justify-between">
+    <header className="bg-white h-16 px-6 flex items-center justify-between">
       <div className="flex-1 justify-start">
         <Title level={4} className="!text-black !mb-0">
           <Image
@@ -43,9 +43,9 @@ const HeaderBar: React.FC = () => {
             className="!h-12 !bg-gray-100 !border-none !rounded-md focus:!shadow-none focus:!ring-2 focus:!ring-blue-500 max-w-md"
           />
           <Space size={6}>
-            <Avatar size="large" src="/images/settings.png" />
+            <Avatar src="/images/settings.png" />
 
-            <Badge dot>
+            <Badge dot className="header-bar-bell">
               <Avatar
                 size="large"
                 style={{ backgroundColor: "transparent", color: "GrayText" }}
@@ -53,7 +53,7 @@ const HeaderBar: React.FC = () => {
               />
             </Badge>
 
-            <Avatar size="large" icon={<UserOutlined />} />
+            <Avatar className="!bg-gray-700" icon={<UserOutlined />} />
           </Space>
         </Space>
       </div>
@@ -61,4 +61,4 @@ const HeaderBar: React.FC = () => {
   );
 };
 
-export default HeaderBar;
+export default Header;
