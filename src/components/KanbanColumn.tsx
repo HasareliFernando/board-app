@@ -32,7 +32,7 @@ const KanbanColumn: React.FC<KanbanColumn> = ({
         <MoreOutlined className="justify-end mr-2 !text-[#353945] !text-bold rotate-90 text-black-300 text-lg" />
       </header>
       <div className="bg-[#F4F5F6] h-100 min-h-fit flex-1 ml-1 mt-1 overflow-x-scroll">
-        <Space direction="vertical" size={12} className="ml-3 mt-5">
+        <Space direction="vertical" size={12} className="px-3 pt-5 w-full">
           {cardList.map((item) => (
             <KanbanCard {...item} />
           ))}

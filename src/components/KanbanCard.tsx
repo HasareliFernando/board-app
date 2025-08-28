@@ -11,6 +11,16 @@ import {
 } from "@ant-design/icons";
 import { Avatar, Card, Flex, Space, Badge, Tag, Image } from "antd";
 import { useDraggable } from "@dnd-kit/core";
+import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
+import isTomorrow from 'dayjs/plugin/isTomorrow';
+import isYesterday from 'dayjs/plugin/isYesterday';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(isToday);
+dayjs.extend(isTomorrow);
+dayjs.extend(isYesterday);
+dayjs.extend(relativeTime);
 
 type ActionWithCountProps = {
   count: any;
@@ -19,15 +29,33 @@ type ActionWithCountProps = {
   color?: string | null;
 };
 
+const colorClasses: { [key: string]: string } = {
+  red: "text-[#F90430]",
+  blue: "text-[#3772FF]"
+};
+
+const dueDateText = (duedate: string) =>{
+  if(dayjs(duedate).add(-1, "day").isYesterday()){
+    return "Yesterday";
+  }
+  if(dayjs(duedate).add(1, "day").isTomorrow()){
+    return "Tomorrow";
+  }
+  if(dayjs(duedate).isToday()){
+    return "Today";
+  }
+  return dayjs(duedate).fromNow();
+};
+
 const ActionWithCount: React.FC<ActionWithCountProps> = ({
   icon,
   count,
   type,
   color,
 }) => (
-  <div className={color ? `!text-[${color}]` : "text-gray"}>
+  <div className={`${color ? color: "text-gray"}`}>
     {icon}
-    {count}
+    <span className="ml-1">{type == "dueDate" ?  dueDateText(count) : count}</span>
   </div>
 );
 
@@ -95,7 +123,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
       items.push(
         <ActionWithCount
           type="dueDate"
-          count={""}
+          count={dueDate}
           icon={<CalendarOutlined />}
         />
       );
@@ -107,7 +135,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
           type="reports"
           count={reports + " Reports"}
           icon={<WarningOutlined />}
-          color={"red-111"}
+          color={colorClasses.red}
         />
       );
     }
@@ -118,7 +146,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
           type="groupCall"
           count={"Group Call"}
           icon={<BellOutlined />}
-          color={"#3772FF"}
+          color={colorClasses.blue}
         />
       );
     }
@@ -129,7 +157,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
           type="stream"
           count={"Stream"}
           icon={<BellOutlined />}
-          color={"#3772FF"}
+          color={colorClasses.blue}
         />
       );
     }
@@ -145,10 +173,11 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
+      className="w-full"
     >
       <Card
         actions={actions}
-        style={{ minWidth: 260 }}
+        style={{ minWidth: 260, width:"100%" }}
         bodyStyle={{ paddingTop: 2, padding: 10 }}
         key={key}
       >
