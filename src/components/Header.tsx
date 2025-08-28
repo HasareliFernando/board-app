@@ -26,7 +26,7 @@ const Header: React.FC = () => {
     return null;
   }
 
-  const handleSearch = (event : any) => {
+  const handleSearch = (event: any) => {
     setSearchTerm(event.target.value);
     filterTodoTasks(event.target.value);
     filterProgressTasks(event.target.value);

@@ -3,14 +3,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { normalize } from "@/utils/validations";
 
-import { TaskCardProps } from "@/components/KanbanCard";
+import { KanbanCardProps } from "@/components/KanbanCard";
 
 type ApprovedTaskStore = {
-  approvedtasks: TaskCardProps[];
+  approvedTasks: KanbanCardProps[];
   loading: boolean;
   error: string | null;
   fetchApprovedTasks: () => Promise<void>;
-  approvedUpdate: (item: TaskCardProps) => void;
+  approvedUpdate: (item: KanbanCardProps) => void;
   removeApprovedTaskByIndex: (index: number) => void;
   filterApprovedTasks: (query: string) => void;
 };
@@ -18,19 +18,19 @@ type ApprovedTaskStore = {
 export const useApprovedTaskStore = create<ApprovedTaskStore>()(
   persist(
     (set, get) => ({
-      approvedtasks: [],
+      approvedTasks: [],
       loading: false,
       error: null,
       approvedUpdate: (item) =>
         set((state) => ({
-          approvedtasks: [...state.approvedtasks, item],
+          approvedTasks: [...state.approvedTasks, item],
         })),
       fetchApprovedTasks: async () => {
         set({ loading: true, error: null });
         try {
           const res = await fetch("/data/approved.json");
           const data = await res.json();
-          set({ approvedtasks: data });
+          set({ approvedTasks: data });
         } catch (err) {
           set({ error: "Failed to load tasks" });
         } finally {
@@ -39,12 +39,12 @@ export const useApprovedTaskStore = create<ApprovedTaskStore>()(
       },
       removeApprovedTaskByIndex: (index: number) =>
         set((state) => {
-          if (index < 0 || index >= state.approvedtasks.length) {
+          if (index < 0 || index >= state.approvedTasks.length) {
             return {};
           }
-          const newTasks = [...state.approvedtasks];
+          const newTasks = [...state.approvedTasks];
           newTasks.splice(index, 1);
-          return { approvedtasks: newTasks };
+          return { approvedTasks: newTasks };
         }),
       filterApprovedTasks: async (query) => {
         const normalizedQuery = normalize(query);
@@ -53,15 +53,14 @@ export const useApprovedTaskStore = create<ApprovedTaskStore>()(
         const filtered = allTasks.filter((task: any) =>
           normalize(task.title).includes(normalizedQuery)
         );
-        set({ approvedtasks: filtered });
-
+        set({ approvedTasks: filtered });
       },
     }),
     {
-      name: "approvedtasks", // key in localStorage
-      partialize: (state) => ({ approvedtasks: state.approvedtasks }),
+      name: "approvedTasks", // key in localStorage
+      partialize: (state) => ({ approvedTasks: state.approvedTasks }),
       onRehydrateStorage: () => (state) => {
-        if (state && state.approvedtasks.length === 0) {
+        if (state && state.approvedTasks.length === 0) {
           state.fetchApprovedTasks();
         }
       },

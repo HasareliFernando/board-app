@@ -3,14 +3,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { normalize } from "@/utils/validations";
 
-import { TaskCardProps } from "@/components/KanbanCard";
+import { KanbanCardProps } from "@/components/KanbanCard";
 
 type RejectTaskStore = {
-  rejecttasks: TaskCardProps[];
+  rejectTasks: KanbanCardProps[];
   loading: boolean;
   error: string | null;
   fetchRejectTasks: () => Promise<void>;
-  rejectUpdate: (item: TaskCardProps) => void;
+  rejectUpdate: (item: KanbanCardProps) => void;
   removeRejectTaskByIndex: (index: number) => void;
   filterRejectTasks: (query: string) => void;
 };
@@ -18,19 +18,19 @@ type RejectTaskStore = {
 export const useRejectTaskStore = create<RejectTaskStore>()(
   persist(
     (set, get) => ({
-      rejecttasks: [],
+      rejectTasks: [],
       loading: false,
       error: null,
       rejectUpdate: (item) =>
         set((state) => ({
-          rejecttasks: [...state.rejecttasks, item],
+          rejectTasks: [...state.rejectTasks, item],
         })),
       fetchRejectTasks: async () => {
         set({ loading: true, error: null });
         try {
           const res = await fetch("/data/reject.json");
           const data = await res.json();
-          set({ rejecttasks: data });
+          set({ rejectTasks: data });
         } catch (err) {
           set({ error: "Failed to load tasks" });
         } finally {
@@ -39,13 +39,13 @@ export const useRejectTaskStore = create<RejectTaskStore>()(
       },
       removeRejectTaskByIndex: (index: number) =>
         set((state) => {
-          if (index < 0 || index >= state.rejecttasks.length) {
+          if (index < 0 || index >= state.rejectTasks.length) {
             // invalid index, return unchanged
             return {};
           }
-          const newTasks = [...state.rejecttasks];
+          const newTasks = [...state.rejectTasks];
           newTasks.splice(index, 1);
-          return { rejecttasks: newTasks };
+          return { rejectTasks: newTasks };
         }),
       filterRejectTasks: async (query) => {
         const normalizedQuery = normalize(query);
@@ -54,14 +54,14 @@ export const useRejectTaskStore = create<RejectTaskStore>()(
         const filtered = allTasks.filter((task: any) =>
           normalize(task.title).includes(normalizedQuery)
         );
-        set({ rejecttasks: filtered });
+        set({ rejectTasks: filtered });
       },
     }),
     {
-      name: "rejecttasks", // key in localStorage
-      partialize: (state) => ({ rejecttasks: state.rejecttasks }),
+      name: "rejectTasks", // key in localStorage
+      partialize: (state) => ({ rejectTasks: state.rejectTasks }),
       onRehydrateStorage: () => (state) => {
-        if (state && state.rejecttasks.length === 0) {
+        if (state && state.rejectTasks.length === 0) {
           state.fetchRejectTasks();
         }
       },

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Space, Tag, Avatar, Divider, Button } from "antd";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import KanbanBoard from "@/components/KanbanBoard";
@@ -7,53 +7,39 @@ import { useProgressTaskStore } from "@/store/useProgressTaskStore";
 import { useApprovedTaskStore } from "@/store/useApprovedTaskStore";
 import { useRejectTaskStore } from "@/store/useRejectTaskStore";
 
-import { TaskCardProps } from "@/components/KanbanCard";
-
 export default function SportXiProjectLayout() {
-  const { todotasks, todoUpdate, removeToDoTaskByIndex } =
-    useToDoTaskStore();
-  const {
-    progresstasks,
-    progressUpdate,
-    removeProgressTaskByIndex
-  } = useProgressTaskStore();
-  const {
-    approvedtasks,
-    approvedUpdate,
-    removeApprovedTaskByIndex
-  } = useApprovedTaskStore();
-  const {
-    rejecttasks,
-    rejectUpdate,
-    removeRejectTaskByIndex
-  } = useRejectTaskStore();
+  const { todoTasks, todoUpdate, removeToDoTaskByIndex } = useToDoTaskStore();
+  const { progressTasks, progressUpdate, removeProgressTaskByIndex } =
+    useProgressTaskStore();
+  const { approvedTasks, approvedUpdate, removeApprovedTaskByIndex } =
+    useApprovedTaskStore();
+  const { rejectTasks, rejectUpdate, removeRejectTaskByIndex } =
+    useRejectTaskStore();
 
   const handleTaskChange = (
     id: number | string,
     newStatus: number | string | undefined
   ) => {
-    console.log(id, newStatus);
     const numId = Number(id);
     const numStatus = Number(newStatus);
     let newTask = null;
 
     if (!isNaN(numId)) {
       const taskLists = [
-        [...todotasks],
-        [...progresstasks],
-        [...approvedtasks],
-        [...rejecttasks],
+        [...todoTasks],
+        [...progressTasks],
+        [...approvedTasks],
+        [...rejectTasks],
       ];
       taskLists.forEach((list, index) => {
-        const itemindex = list.findIndex((item) => item.id === numId);
-        if (itemindex !== -1) {
-          newTask = list[itemindex];
-          console.log(newTask);
-          list.splice(itemindex, 1); // ✅ remove the item
+        const itemIndex = list.findIndex((item) => item.id === numId);
+        if (itemIndex !== -1) {
+          newTask = list[itemIndex];
+          if (newTask?.status === numStatus) return;
+          list.splice(itemIndex, 1); // ✅ remove the item
           if (!isNaN(numStatus) && newTask !== null) {
             if (newTask.status !== undefined) {
               newTask.status = numStatus;
-              console.log(newTask);
               switch (numStatus) {
                 case 1:
                   todoUpdate(newTask);
@@ -74,22 +60,21 @@ export default function SportXiProjectLayout() {
                 default:
                   console.log("Unknown status");
               }
-              console.log(index)
               switch (index) {
                 case 0:
-                  removeToDoTaskByIndex(itemindex);
+                  removeToDoTaskByIndex(itemIndex);
                   break;
 
                 case 1:
-                  removeProgressTaskByIndex(itemindex);
+                  removeProgressTaskByIndex(itemIndex);
                   break;
 
                 case 2:
-                  removeApprovedTaskByIndex(itemindex);
+                  removeApprovedTaskByIndex(itemIndex);
                   break;
 
                 case 3:
-                  removeRejectTaskByIndex(itemindex);
+                  removeRejectTaskByIndex(itemIndex);
                   break;
 
                 default:
@@ -97,7 +82,7 @@ export default function SportXiProjectLayout() {
               }
             }
           }
-          return; 
+          return;
         }
       });
     }
@@ -144,7 +129,7 @@ export default function SportXiProjectLayout() {
               />
             </Avatar.Group>
             <Button
-              className="bg-transparent border-2 !border-gray-300 !rounded-xl !text-gray-300 ml-3"
+              className="bg-transparent border-2 !border-gray-300 !text-gray-300 ml-3 !rounded-full !px-3 manage-btn"
               icon={<EditOutlined />}
               iconPosition="end"
             >
@@ -159,10 +144,10 @@ export default function SportXiProjectLayout() {
       </header>
       <div className="flex flex-1 justify-between overflow-y-scroll">
         <KanbanBoard
-          todolist={todotasks}
-          progresslist={progresstasks}
-          approvedlist={approvedtasks}
-          rejectlist={rejecttasks}
+          todoList={todoTasks}
+          progressList={progressTasks}
+          approvedList={approvedTasks}
+          rejectList={rejectTasks}
           handleTaskChange={handleTaskChange}
         />
       </div>

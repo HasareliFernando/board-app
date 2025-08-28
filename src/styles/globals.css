@@ -5,13 +5,6 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -28,4 +21,42 @@ body {
 .header-bar-bell .ant-badge-dot {
   margin-top: 11px;
   margin-right: 13px;
+}
+
+.card-category {
+  .ant-badge-status-text {
+    color: gray !important;
+    font-size: 12px !important;
+  }
+
+  .ant-badge-status-dot {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 30% !important;
+  }
+}
+
+.kanban-column {
+  font-weight: 600;
+}
+
+.manage-btn {
+  font-size: 12px;
+  height: 24px;
+  padding: 1px !important;
+}
+
+.support-btn {
+  position: absolute !important;
+  bottom: 100px !important;
+}
+
+.logout-btn {
+  position: absolute !important;
+  bottom: 30px !important;
+  background: #171717;
+}
+
+.card-img {
+  object-fit: cover;
 }

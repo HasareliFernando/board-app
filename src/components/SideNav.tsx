@@ -14,6 +14,8 @@ import {
   MessageOutlined,
   RightOutlined,
   FolderOutlined,
+  ToTopOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { Badge } from "antd";
 
@@ -21,7 +23,8 @@ interface MenuItem {
   key: number;
   label: string;
   url: string;
-  type: "TextButton" | "Dropdown";
+  className: string;
+  type: "TextButton" | "Dropdown" | "BottomButton";
   icon: ReactNode;
   badge: number;
   show: boolean;
@@ -40,6 +43,7 @@ const SideNav: React.FC = () => {
       type: "TextButton",
       url: "/dashboard",
       show: false,
+      className: '',
       icon: <AppstoreOutlined />,
       badge: 0,
     },
@@ -48,6 +52,7 @@ const SideNav: React.FC = () => {
       label: "Boards",
       type: "Dropdown",
       url: "",
+      className: '',
       icon: <FolderOutlined />,
       show: false,
       dropdownlist: [
@@ -80,6 +85,7 @@ const SideNav: React.FC = () => {
       type: "TextButton",
       url: "/dashboard",
       show: false,
+      className: '',
       icon: <MessageOutlined />,
       badge: 3,
     },
@@ -88,6 +94,7 @@ const SideNav: React.FC = () => {
       label: "Calendar",
       type: "TextButton",
       url: "/dashboard",
+      className: '',
       icon: <CalendarOutlined />,
       show: false,
       badge: 0,
@@ -97,7 +104,28 @@ const SideNav: React.FC = () => {
       label: "Team members",
       type: "TextButton",
       url: "/dashboard",
+      className: '',
       icon: <UserOutlined />,
+      show: false,
+      badge: 0,
+    },
+    {
+      key: 6,
+      label: "Support",
+      type: "BottomButton",
+      url: "/dashboard",
+      className: 'support-btn',
+      icon: <InfoCircleOutlined />,
+      show: false,
+      badge: 0,
+    },
+    {
+      key: 7,
+      label: "Logout",
+      type: "BottomButton",
+      url: "/dashboard",
+      className: 'logout-btn',
+      icon: <ToTopOutlined className="rotate-270" />,
       show: false,
       badge: 0,
     },
@@ -244,7 +272,7 @@ const SideNav: React.FC = () => {
                       <Button
                         onClick={() => handleSelect(subitem.key, subitem.url)}
                         type="text"
-                        className="!h-15 !w-full flex !justify-start items-center gap-3 px-4"
+                        className="!h-10 !w-full flex !justify-start items-center gap-3 px-4"
                       >
                         <RightOutlined
                           className={`text-xs justify-start !bg-transparent ${
@@ -268,6 +296,42 @@ const SideNav: React.FC = () => {
                     ))}
                   </div>
                 </>
+              );
+            } else {
+              return (
+                <Button
+                  onClick={() => handleSelect(item.key, item.url)}
+                  type="text"
+                  className={`!h-15 ${item?.className} w-60 flex items-center gap-3 px-4 ${
+                    selected === item.key
+                      ? "!border !border-gray-300 rounded"
+                      : "!border-none"
+                  }`}
+                >
+                  <span className="!w-full flex !justify-start items-center ">
+                    <Avatar
+                      size="large"
+                      icon={item.icon}
+                      className={`!bg-transparent ${
+                        selected === item.key
+                          ? "!text-blue-500"
+                          : "!text-gray-500"
+                      } text-xl`}
+                    />
+
+                    <div className="flex flex-col text-left leading-tight ml-2">
+                      <span
+                        className={`!bg-transparent ${
+                          selected === item.key
+                            ? "!text-blue-500"
+                            : "!text-gray-500"
+                        } text-base font-semibold`}
+                      >
+                        {item.label}
+                      </span>
+                    </div>
+                  </span>
+                </Button>
               );
             }
           })}

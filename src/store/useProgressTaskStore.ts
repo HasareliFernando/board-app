@@ -3,14 +3,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { normalize } from "@/utils/validations";
 
-import { TaskCardProps } from "@/components/KanbanCard";
+import { KanbanCardProps } from "@/components/KanbanCard";
 
 type ProgressTaskStore = {
-  progresstasks: TaskCardProps[];
+  progressTasks: KanbanCardProps[];
   loading: boolean;
   error: string | null;
   fetchProgressTasks: () => Promise<void>;
-  progressUpdate: (item: TaskCardProps) => void;
+  progressUpdate: (item: KanbanCardProps) => void;
   removeProgressTaskByIndex: (index: number) => void;
   filterProgressTasks: (query: string) => void;
 };
@@ -18,19 +18,19 @@ type ProgressTaskStore = {
 export const useProgressTaskStore = create<ProgressTaskStore>()(
   persist(
     (set, get) => ({
-      progresstasks: [],
+      progressTasks: [],
       loading: false,
       error: null,
       progressUpdate: (item) =>
         set((state) => ({
-          progresstasks: [...state.progresstasks, item],
+          progressTasks: [...state.progressTasks, item],
         })),
       fetchProgressTasks: async () => {
         set({ loading: true, error: null });
         try {
           const res = await fetch("/data/progress.json");
           const data = await res.json();
-          set({ progresstasks: data });
+          set({ progressTasks: data });
         } catch (err) {
           set({ error: "Failed to load tasks" });
         } finally {
@@ -39,28 +39,28 @@ export const useProgressTaskStore = create<ProgressTaskStore>()(
       },
       removeProgressTaskByIndex: (index: number) =>
         set((state) => {
-          if (index < 0 || index >= state.progresstasks.length) {
+          if (index < 0 || index >= state.progressTasks.length) {
             return {};
           }
-          const newTasks = [...state.progresstasks];
+          const newTasks = [...state.progressTasks];
           newTasks.splice(index, 1);
-          return { progresstasks: newTasks };
+          return { progressTasks: newTasks };
         }),
-      filterProgressTasks: async  (query) => {
+      filterProgressTasks: async (query) => {
         const normalizedQuery = normalize(query);
         const res = await fetch("/data/progress.json");
         const allTasks = await res.json();
         const filtered = allTasks.filter((task: any) =>
           normalize(task.title).includes(normalizedQuery)
         );
-        set({ progresstasks: filtered });
+        set({ progressTasks: filtered });
       },
     }),
     {
-      name: "progresstasks", // key in localStorage
-      partialize: (state) => ({ progresstasks: state.progresstasks }),
+      name: "progressTasks", // key in localStorage
+      partialize: (state) => ({ progressTasks: state.progressTasks }),
       onRehydrateStorage: () => (state) => {
-        if (state && state.progresstasks.length === 0) {
+        if (state && state.progressTasks.length === 0) {
           state.fetchProgressTasks();
         }
       },

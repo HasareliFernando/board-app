@@ -2,29 +2,31 @@ import { DragEndEvent, DndContext } from "@dnd-kit/core";
 import { Row } from "antd";
 
 import KanbanColumn from "./KanbanColumn";
-import { TaskCardProps } from "./KanbanCard";
+import { KanbanCardProps } from "./KanbanCard";
 
 type KanbanBoardType = {
-  todolist: TaskCardProps[] | [];
-  progresslist: TaskCardProps[] | [];
-  approvedlist: TaskCardProps[] | [];
-  rejectlist: TaskCardProps[] | [];
-  handleTaskChange:(id: number | string, status: number | string | undefined) => void;
+  todoList: KanbanCardProps[] | [];
+  progressList: KanbanCardProps[] | [];
+  approvedList: KanbanCardProps[] | [];
+  rejectList: KanbanCardProps[] | [];
+  handleTaskChange: (
+    id: number | string,
+    status: number | string | undefined
+  ) => void;
 };
 
 const KanbanBoard: React.FC<KanbanBoardType> = ({
-  todolist,
-  progresslist,
-  approvedlist,
-  rejectlist,
-  handleTaskChange
+  todoList,
+  progressList,
+  approvedList,
+  rejectList,
+  handleTaskChange,
 }) => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
     const issueId = active.id as string;
-    const newStatus = over.id as TaskCardProps["status"];
-    console.log({ issueId, newStatus });
+    const newStatus = over.id as KanbanCardProps["status"];
     handleTaskChange(issueId, newStatus);
   };
 
@@ -33,31 +35,31 @@ const KanbanBoard: React.FC<KanbanBoardType> = ({
       <DndContext onDragEnd={handleDragEnd}>
         <KanbanColumn
           color="#E6E8EC"
-          textcolor="#353945"
+          textColor="#353945"
           name="To Do"
           type={1}
-          cardlist={todolist}
+          cardList={todoList}
         />
         <KanbanColumn
           color="#FFA800"
-          textcolor="#353945"
+          textColor="#353945"
           name="In Progress"
           type={2}
-          cardlist={progresslist}
+          cardList={progressList}
         />
         <KanbanColumn
           color="#AEE753"
-          textcolor="#353945"
+          textColor="#353945"
           name="Approved"
           type={3}
-          cardlist={approvedlist}
+          cardList={approvedList}
         />
         <KanbanColumn
           color="#F90430"
-          textcolor="#ffffff"
+          textColor="#ffffff"
           name="Reject"
           type={4}
-          cardlist={rejectlist}
+          cardList={rejectList}
         />
       </DndContext>
     </Row>

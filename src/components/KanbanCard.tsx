@@ -1,5 +1,4 @@
 import React, { ReactNode, useState, useMemo } from "react";
-import Image from "next/image";
 import {
   LinkOutlined,
   MessageOutlined,
@@ -10,8 +9,7 @@ import {
   ThunderboltOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
-import { Avatar, Card, Flex, Space, Badge, Tag } from "antd";
-import { Color } from "antd/es/color-picker";
+import { Avatar, Card, Flex, Space, Badge, Tag, Image } from "antd";
 import { useDraggable } from "@dnd-kit/core";
 
 type ActionWithCountProps = {
@@ -33,68 +31,73 @@ const ActionWithCount: React.FC<ActionWithCountProps> = ({
   </div>
 );
 
-export type TaskCardProps = {
+export type KanbanCardProps = {
   id: number;
   category: number;
   title: string;
   key: number;
-  teamlist: { id: number; img: string }[];
+  teamList: { id: number; img: string }[];
   priority: "High" | "Low" | "Medium";
-  imagesrc?: string;
-  linkcount: number;
-  messagecount: number;
-  duedate: string | null;
+  imageSrc?: string;
+  linkCount: number;
+  messageCount: number;
+  dueDate: string | null;
   reports: number;
   stream: boolean;
-  groupcall: boolean;
+  groupCall: boolean;
   status?: number;
 };
 
-const TaskCard: React.FC<TaskCardProps> = ({
+const KanbanCard: React.FC<KanbanCardProps> = ({
   id,
   category,
   title,
   key,
-  teamlist,
+  teamList,
   priority,
-  imagesrc,
-  linkcount,
-  messagecount,
-  duedate,
+  imageSrc,
+  linkCount,
+  messageCount,
+  dueDate,
   reports,
   stream,
-  groupcall,
+  groupCall,
   status,
 }) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef } = useDraggable({
     id: id,
   });
+
   const actions = useMemo(() => {
     const items: ReactNode[] = [];
 
-    if (linkcount > 0) {
+    if (linkCount > 0) {
       items.push(
         <ActionWithCount
           type="link"
-          count={linkcount}
+          count={linkCount}
           icon={<LinkOutlined />}
         />
       );
     }
 
-    if (messagecount > 0) {
+    if (messageCount > 0) {
       items.push(
         <ActionWithCount
           type="message"
-          count={messagecount}
+          count={messageCount}
           icon={<MessageOutlined />}
         />
       );
     }
 
-    if (duedate !== null) {
+    if (dueDate !== null) {
       items.push(
-        <ActionWithCount type="duedate" count={""} icon={<CalendarOutlined />} />
+        <ActionWithCount
+          type="dueDate"
+          count={""}
+          icon={<CalendarOutlined />}
+        />
       );
     }
 
@@ -102,17 +105,17 @@ const TaskCard: React.FC<TaskCardProps> = ({
       items.push(
         <ActionWithCount
           type="reports"
-          count={reports + "Reports"}
+          count={reports + " Reports"}
           icon={<WarningOutlined />}
-          color={"#F90430"}
+          color={"red-111"}
         />
       );
     }
 
-    if (groupcall) {
+    if (groupCall) {
       items.push(
         <ActionWithCount
-          type="groupcall"
+          type="groupCall"
           count={"Group Call"}
           icon={<BellOutlined />}
           color={"#3772FF"}
@@ -145,22 +148,9 @@ const TaskCard: React.FC<TaskCardProps> = ({
     >
       <Card
         actions={actions}
-        style={{ minWidth: 300 }}
-        bodyStyle={{ paddingTop: 2, paddingLeft: 10 }}
+        style={{ minWidth: 260 }}
+        bodyStyle={{ paddingTop: 2, padding: 10 }}
         key={key}
-        // cover={
-        //   imagesrc !== null ? (
-        //     <Image
-        //       src={imagesrc || "/images/Rectangle_60.png"}
-        //       alt=""
-        //       width={100}
-        //       height={60}
-        //       className="rounded-lg"
-        //     />
-        //   ) : (
-        //     ""
-        //   )
-        // }
       >
         <Space direction="vertical" size={10} className="!w-full ">
           <span className="!w-full flex">
@@ -199,32 +189,38 @@ const TaskCard: React.FC<TaskCardProps> = ({
                   ? "Interface"
                   : ""
               }
+              className="card-category"
             ></Badge>
-            <MoreOutlined className="ml-auto justify-end" />
+            <MoreOutlined className="ml-auto justify-end rotate-90" />
           </span>
-          <span className="text-lg text-blck-300 ">{title}</span>
+          <span className="text-lg text-black-300 font-semibold">{title}</span>
           <span>
-            <Avatar.Group
-              maxCount={3}
-              size="small"
-              maxStyle={{ backgroundColor: "#B1B5C3" }}
-            >
-              {teamlist.map((item) => (
-                <Avatar
-                  style={{ backgroundColor: "#353945" }}
-                  icon={<UserOutlined />}
-                />
-              ))}
+            <Avatar.Group size="small" max={{ count: 3 }}>
+              {teamList?.length &&
+                teamList.map((item) => (
+                  <Avatar
+                    style={{ backgroundColor: "#353945" }}
+                    icon={<UserOutlined />}
+                  />
+                ))}
             </Avatar.Group>
-            <Tag color="#F4F5F6" className="!ml-20">
+            <Tag color="#F4F5F6" className="!ml-2">
               <ThunderboltOutlined className="!text-[#B1B5C3] " />
               <span className="text-[#B1B5C3] ml-3">{priority}</span>
             </Tag>
           </span>
+          {imageSrc ? (
+            <Image
+              width={"100%"}
+              height={90}
+              className="card-img"
+              src={imageSrc}
+            />
+          ) : null}
         </Space>
       </Card>
     </Flex>
   );
 };
 
-export default TaskCard;
+export default KanbanCard;
