@@ -12,18 +12,19 @@ import {
 } from "@ant-design/icons";
 import { Avatar, Card, Flex, Space, Badge, Tag } from "antd";
 import { Color } from "antd/es/color-picker";
+import { useDraggable } from "@dnd-kit/core";
 
 type ActionWithCountProps = {
   count: any;
   icon: ReactNode;
-  key: string;
+  type: string;
   color?: string | null;
 };
 
 const ActionWithCount: React.FC<ActionWithCountProps> = ({
   icon,
   count,
-  key,
+  type,
   color,
 }) => (
   <div className={color ? `!text-[${color}]` : "text-gray"}>
@@ -32,9 +33,10 @@ const ActionWithCount: React.FC<ActionWithCountProps> = ({
   </div>
 );
 
-type TaskCardProps = {
+export type TaskCardProps = {
+  id: number;
   category: number;
-  title: ReactNode;
+  title: string;
   key: number;
   teamlist: { id: number; img: string }[];
   priority: "High" | "Low" | "Medium";
@@ -45,9 +47,11 @@ type TaskCardProps = {
   reports: number;
   stream: boolean;
   groupcall: boolean;
+  status?: number;
 };
 
 const TaskCard: React.FC<TaskCardProps> = ({
+  id,
   category,
   title,
   key,
@@ -60,20 +64,28 @@ const TaskCard: React.FC<TaskCardProps> = ({
   reports,
   stream,
   groupcall,
+  status,
 }) => {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: id,
+  });
   const actions = useMemo(() => {
     const items: ReactNode[] = [];
 
     if (linkcount > 0) {
       items.push(
-        <ActionWithCount key="link" count={linkcount} icon={<LinkOutlined />} />
+        <ActionWithCount
+          type="link"
+          count={linkcount}
+          icon={<LinkOutlined />}
+        />
       );
     }
 
     if (messagecount > 0) {
       items.push(
         <ActionWithCount
-          key="message"
+          type="message"
           count={messagecount}
           icon={<MessageOutlined />}
         />
@@ -82,14 +94,14 @@ const TaskCard: React.FC<TaskCardProps> = ({
 
     if (duedate !== null) {
       items.push(
-        <ActionWithCount key="duedate" count={""} icon={<CalendarOutlined />} />
+        <ActionWithCount type="duedate" count={""} icon={<CalendarOutlined />} />
       );
     }
 
     if (reports) {
       items.push(
         <ActionWithCount
-          key="reports"
+          type="reports"
           count={reports + "Reports"}
           icon={<WarningOutlined />}
           color={"#F90430"}
@@ -100,7 +112,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
     if (groupcall) {
       items.push(
         <ActionWithCount
-          key="groupcall"
+          type="groupcall"
           count={"Group Call"}
           icon={<BellOutlined />}
           color={"#3772FF"}
@@ -111,7 +123,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
     if (stream) {
       items.push(
         <ActionWithCount
-          key="stream"
+          type="stream"
           count={"Stream"}
           icon={<BellOutlined />}
           color={"#3772FF"}
@@ -123,7 +135,14 @@ const TaskCard: React.FC<TaskCardProps> = ({
   }, []);
 
   return (
-    <Flex gap="middle" align="start" vertical>
+    <Flex
+      gap="middle"
+      align="start"
+      vertical
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+    >
       <Card
         actions={actions}
         style={{ minWidth: 300 }}
